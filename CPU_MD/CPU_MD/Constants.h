@@ -37,7 +37,7 @@
 #define sigma_Si_Xe 3.9
 #define epsilon_Si_Xe 0.00016
 #define si_xe_Cluster 8.0
-#define a_Si_Xe 20000.0f
+#define a_Si_Xe 2000.0f
 
 // Device Constants
 #define GEAR1			0.15833333333333333333333333333333
