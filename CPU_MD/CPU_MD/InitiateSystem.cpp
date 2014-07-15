@@ -118,6 +118,16 @@ int readConfig(string configFilename, configurations *config)
 				pos = line.find_first_of('=');
 				config->STEPS = atoi(line.substr(pos+1, line.size()).c_str());
 			}
+			else if(line.find("PRINT_GRAPHS") == 0)
+			{
+				pos = line.find_first_of('=');
+				config->PRINT_GRAPHS = atoi(line.substr(pos+1, line.size()).c_str());
+			}
+			else if(line.find("OUT_FOR_GRAPHS") == 0)
+			{
+				pos = line.find_first_of('=');
+				config->OUT_FOR_GRAPHS = line.substr(pos+1, line.size());
+			}
 		}
 	}
 

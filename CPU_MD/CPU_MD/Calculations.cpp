@@ -264,6 +264,7 @@ double V_total_Si_Xe(int SI_PARTICLES, particleStruct* siParticles, int XE_PARTI
 	}
 	return vTotal;
 }
+
 double V_total_Xe(int XE_PARTICLES, particleStruct* xeParticles)
 {
 	double vTotal = 0.0;
@@ -281,6 +282,7 @@ double V_total_Xe(int XE_PARTICLES, particleStruct* xeParticles)
 	}
 	return vTotal;
 }
+
 void V_total(int SI_PARTICLES, particleStruct* siParticles, int XE_PARTICLES, particleStruct* xeParticles)
 {
 	double vTotal = 0.0;

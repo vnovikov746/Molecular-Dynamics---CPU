@@ -17,16 +17,17 @@ struct configurations
 	int MAX_XE_NEIGHBORS;
 	std::string* CONDITIONS_FILE;
 	std::string* INPUT_FILE;
+	std::string OUT_FOR_GRAPHS;
 	int SI_LENGTH;
 	int SI_WIDTH;
 	int SI_HEIGHT;
 	int XE_LENGTH;
 	int XE_WIDTH;
 	int XE_HEIGHT;
+	int STEPS;
 	double LA_SPACE;
 	double TEMPERATURE;
 	double TIMESTEPS;
-	int STEPS;
 	
 	// debug parameters
 	bool USE_NEIGHBOR_LISTS;
@@ -37,6 +38,7 @@ struct configurations
 	bool SYS_PAUSE;
 	bool ANIMATE;
 	bool useLennardJonesPotentialForSi;
+	bool PRINT_GRAPHS;
 };
 
 #endif	//CONFIGURATIONS_H_
