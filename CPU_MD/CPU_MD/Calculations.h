@@ -17,10 +17,10 @@
 double distance2(real3, real3);//r(i,j)
 
 //-------------- calculate forces between Si --------------//
-void calculateForce_Si(int, int, particleStruct, particleStruct*, particleStruct*, int, configurations);
+void calculateForce_Si(int, int, particleStruct*, particleStruct*, int, int, bool, bool);
 //--------------------------------------------------------//
 
-void calculateForce_Xe(int, int, particleStruct, particleStruct*, particleStruct*, int, configurations);
+void calculateForce_Xe(int, int, particleStruct*, particleStruct*, int, int, bool);
 
 //---------calculate total potential of Si ---------------//
 double V_total_Si(int, particleStruct*);

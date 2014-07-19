@@ -10,215 +10,223 @@ double distance2(real3 i, real3 j)
 }
 
 //-------------------------- calculate Force Si ------------------------------//
-void calculateForce_Si(int MAX_SI_NEIGHBORS, int MAX_XE_NEIGHBORS, particleStruct particle, particleStruct* siParticles, particleStruct* xeParticles, int i, configurations config)
+void calculateForce_Si(int MAX_SI_NEIGHBORS, int MAX_XE_NEIGHBORS, particleStruct* siParticles, particleStruct* xeParticles, int numOfSi, int numOfXe, bool USE_NEIGHBOR_LISTS, bool useLennardJonesPotentialForSi)
 {
-	real3 *siNeigborsPositions = NULL;
-	real3 *xeNeigborsPositions = NULL;
-
-	real3 iPosition = particle.position;
-	int countSi = 0;
-	int countXe = 0;
-	double r_ij = 0.0;
-	double r_ik = 0.0;
-	double r_jk = 0.0;
-	siParticles[i].force.x = 0.0;
-	siParticles[i].force.y = 0.0;
-	siParticles[i].force.z = 0.0;
-	real3 jPosition;
-	real3 kPosition;
-
-	if(config.USE_NEIGHBOR_LISTS)
+	for(int i = 0; i < numOfSi; i++)
 	{
-		siNeigborsPositions = new real3[MAX_SI_NEIGHBORS];
-		xeNeigborsPositions = new real3[MAX_XE_NEIGHBORS];
-		for(countSi = 0; countSi < MAX_SI_NEIGHBORS && particle.siNeighbors[countSi] != -1; countSi++)
-		{
-			siNeigborsPositions[countSi] = siParticles[particle.siNeighbors[countSi]].position;
-		}
-		for(countXe = 0; countXe < MAX_XE_NEIGHBORS && particle.xeNeighbors[countXe] != -1; countXe++)
-		{
-			xeNeigborsPositions[countXe] = xeParticles[particle.xeNeighbors[countXe]].position;
-		}
-	}
+		particleStruct particle = siParticles[i];
+		real3 *siNeigborsPositions = NULL;
+		real3 *xeNeigborsPositions = NULL;
 
-	if(!config.USE_NEIGHBOR_LISTS)
-	{
-		countSi = config.SI_PARTICLES;
-		countXe = config.XE_PARTICLES;
-	}
+		real3 iPosition = particle.position;
+		int countSi = 0;
+		int countXe = 0;
+		double r_ij = 0.0;
+		double r_ik = 0.0;
+		double r_jk = 0.0;
+		siParticles[i].force.x = 0.0;
+		siParticles[i].force.y = 0.0;
+		siParticles[i].force.z = 0.0;
+		real3 jPosition;
+		real3 kPosition;
 
-	if(config.useLennardJonesPotentialForSi)
-	{
-		for(int j = 0; j < countSi; j++)
+		if(USE_NEIGHBOR_LISTS)
 		{
-			if(j != i)
+			siNeigborsPositions = new real3[MAX_SI_NEIGHBORS];
+			xeNeigborsPositions = new real3[MAX_XE_NEIGHBORS];
+			for(countSi = 0; countSi < MAX_SI_NEIGHBORS && particle.siNeighbors[countSi] != -1; countSi++)
 			{
-				if(!config.USE_NEIGHBOR_LISTS)
-					jPosition = siParticles[j].position;
-				else
-					jPosition = siNeigborsPositions[j];
+				siNeigborsPositions[countSi] = siParticles[particle.siNeighbors[countSi]].position;
+			}
+			for(countXe = 0; countXe < MAX_XE_NEIGHBORS && particle.xeNeighbors[countXe] != -1; countXe++)
+			{
+				xeNeigborsPositions[countXe] = xeParticles[particle.xeNeighbors[countXe]].position;
+			}
+		}
 
-				r_ij = distance2(iPosition, jPosition);	
-	//			if(r_ij/sigma_Si < 1.8)
+		if(!USE_NEIGHBOR_LISTS)
+		{
+			countSi = numOfSi;
+			countXe = numOfXe;
+		}
+
+		if(useLennardJonesPotentialForSi)
+		{
+			for(int j = 0; j < countSi; j++)
+			{
+				if(j != i)
 				{
-					siParticles[i].force.x += (iPosition.x-jPosition.x)*lennardJonesForce(r_ij,sigma_Si,epsilon_Si);
-					siParticles[i].force.y += (iPosition.y-jPosition.y)*lennardJonesForce(r_ij,sigma_Si,epsilon_Si);
-					siParticles[i].force.z += (iPosition.z-jPosition.z)*lennardJonesForce(r_ij,sigma_Si,epsilon_Si);
+					if(!USE_NEIGHBOR_LISTS)
+						jPosition = siParticles[j].position;
+					else
+						jPosition = siNeigborsPositions[j];
+
+					r_ij = distance2(iPosition, jPosition);	
+		//			if(r_ij/sigma_Si < 1.8)
+					{
+						siParticles[i].force.x += (iPosition.x-jPosition.x)*lennardJonesForce(r_ij,sigma_Si,epsilon_Si);
+						siParticles[i].force.y += (iPosition.y-jPosition.y)*lennardJonesForce(r_ij,sigma_Si,epsilon_Si);
+						siParticles[i].force.z += (iPosition.z-jPosition.z)*lennardJonesForce(r_ij,sigma_Si,epsilon_Si);
+					}
 				}
 			}
 		}
-	}
 
-	else
-	{	
-		for(int j = 0; j < countSi; j++)
-		{
-			if(j != i)
+		else
+		{	
+			for(int j = 0; j < countSi; j++)
 			{
-				if(!config.USE_NEIGHBOR_LISTS)
-					jPosition = siParticles[j].position;
-				else
-					jPosition = siNeigborsPositions[j];
+				if(j != i)
+				{
+					if(!USE_NEIGHBOR_LISTS)
+						jPosition = siParticles[j].position;
+					else
+						jPosition = siNeigborsPositions[j];
 			
-				r_ij = distance2(iPosition, jPosition);
+					r_ij = distance2(iPosition, jPosition);
 
-				if(r_ij/sigma_Si < a_Si)
-				{
-					siParticles[i].force.x -= v2_derivative_of_rix(iPosition, jPosition, r_ij);
-					siParticles[i].force.y -= v2_derivative_of_riy(iPosition, jPosition, r_ij);
-					siParticles[i].force.z -= v2_derivative_of_riz(iPosition, jPosition, r_ij);
-				}
-				for(int k = 0; k < countSi; k++)
-				{
-					if(k != i && k != j)
+					if(r_ij/sigma_Si < a_Si)
 					{
-						if(!config.USE_NEIGHBOR_LISTS)
+						siParticles[i].force.x -= v2_derivative_of_rix(iPosition, jPosition, r_ij);
+						siParticles[i].force.y -= v2_derivative_of_riy(iPosition, jPosition, r_ij);
+						siParticles[i].force.z -= v2_derivative_of_riz(iPosition, jPosition, r_ij);
+					}
+					for(int k = 0; k < countSi; k++)
+					{
+						if(k != i && k != j)
 						{
-							kPosition = siParticles[k].position;							
-						}
-						else
-						{
-							kPosition = siNeigborsPositions[k];
-						}
+							if(!USE_NEIGHBOR_LISTS)
+							{
+								kPosition = siParticles[k].position;							
+							}
+							else
+							{
+								kPosition = siNeigborsPositions[k];
+							}
 
-						r_ik = distance2(iPosition, kPosition);
-						r_jk = distance2(jPosition, kPosition);
-						if((r_ij/sigma_Si < a_Si && r_ik/sigma_Si < a_Si) || (r_ij/sigma_Si < a_Si && r_jk/sigma_Si < a_Si) || (r_ik/sigma_Si < a_Si && r_jk/sigma_Si < a_Si))
-						{
-							siParticles[i].force.x -= v3_derivative_of_rix(iPosition, jPosition, kPosition, r_ij, r_ik, r_jk);
-							siParticles[i].force.x -= v3_derivative_of_rix(iPosition, kPosition, jPosition, r_ik, r_ij, r_jk);
-							siParticles[i].force.y -= v3_derivative_of_riy(iPosition, jPosition, kPosition, r_ij, r_ik, r_jk);
-							siParticles[i].force.y -= v3_derivative_of_riy(iPosition, kPosition, jPosition, r_ik, r_ij, r_jk);
-							siParticles[i].force.z -= v3_derivative_of_riz(iPosition, jPosition, kPosition, r_ij, r_ik, r_jk);
-							siParticles[i].force.z -= v3_derivative_of_riz(iPosition, kPosition, jPosition, r_ik, r_ij, r_jk);
+							r_ik = distance2(iPosition, kPosition);
+							r_jk = distance2(jPosition, kPosition);
+							if((r_ij/sigma_Si < a_Si && r_ik/sigma_Si < a_Si) || (r_ij/sigma_Si < a_Si && r_jk/sigma_Si < a_Si) || (r_ik/sigma_Si < a_Si && r_jk/sigma_Si < a_Si))
+							{
+								siParticles[i].force.x -= v3_derivative_of_rix(iPosition, jPosition, kPosition, r_ij, r_ik, r_jk);
+								siParticles[i].force.x -= v3_derivative_of_rix(iPosition, kPosition, jPosition, r_ik, r_ij, r_jk);
+								siParticles[i].force.y -= v3_derivative_of_riy(iPosition, jPosition, kPosition, r_ij, r_ik, r_jk);
+								siParticles[i].force.y -= v3_derivative_of_riy(iPosition, kPosition, jPosition, r_ik, r_ij, r_jk);
+								siParticles[i].force.z -= v3_derivative_of_riz(iPosition, jPosition, kPosition, r_ij, r_ik, r_jk);
+								siParticles[i].force.z -= v3_derivative_of_riz(iPosition, kPosition, jPosition, r_ik, r_ij, r_jk);
+							}
 						}
 					}
 				}
 			}
 		}
-	}
 
-/*	for(int j = 0; j < countXe; j++)
-	{
-			if(!config.USE_NEIGHBOR_LISTS)
-				jPosition = xeParticles[j].position;
-			else
-				jPosition = xeNeigborsPositions[j];
-
-		jPosition.x += 0.25*config->SI_LENGTH*space_Si;
-		jPosition.y += 0.25*config->SI_LENGTH*space_Si;
-		jPosition.z += config->SI_HEIGHT+config->LA_SPACE;
-		r_ij = distance2(iPosition, jPosition);
-		if(r_ij/sigma_Si_Xe < a_Si_Xe)
+	/*	for(int j = 0; j < countXe; j++)
 		{
-			siParticles[i].force.x += ((iPosition.x-jPosition.x)*(lennardJonesForce(r_ij,sigma_Si_Xe,epsilon_Si_Xe)));//-lennardJonesForce(2.5*sigma_Si,sigma_Si_Xe,epsilon_Si_Xe)));
-			siParticles[i].force.y += ((iPosition.y-jPosition.y)*(lennardJonesForce(r_ij,sigma_Si_Xe,epsilon_Si_Xe)));//-lennardJonesForce(2.5*sigma_Si,sigma_Si_Xe,epsilon_Si_Xe)));
-			siParticles[i].force.z += ((iPosition.z-jPosition.z)*(lennardJonesForce(r_ij,sigma_Si_Xe,epsilon_Si_Xe)));//-lennardJonesForce(2.5*sigma_Si,sigma_Si_Xe,epsilon_Si_Xe)));
-		}
-	}*/
+				if(!USE_NEIGHBOR_LISTS)
+					jPosition = xeParticles[j].position;
+				else
+					jPosition = xeNeigborsPositions[j];
 
-	if(config.USE_NEIGHBOR_LISTS)
-	{
-		free(siNeigborsPositions);
-		free(xeNeigborsPositions);
+			jPosition.x += 0.25*config->SI_LENGTH*space_Si;
+			jPosition.y += 0.25*config->SI_LENGTH*space_Si;
+			jPosition.z += config->SI_HEIGHT+config->LA_SPACE;
+			r_ij = distance2(iPosition, jPosition);
+			if(r_ij/sigma_Si_Xe < a_Si_Xe)
+			{
+				siParticles[i].force.x += ((iPosition.x-jPosition.x)*(lennardJonesForce(r_ij,sigma_Si_Xe,epsilon_Si_Xe)));//-lennardJonesForce(2.5*sigma_Si,sigma_Si_Xe,epsilon_Si_Xe)));
+				siParticles[i].force.y += ((iPosition.y-jPosition.y)*(lennardJonesForce(r_ij,sigma_Si_Xe,epsilon_Si_Xe)));//-lennardJonesForce(2.5*sigma_Si,sigma_Si_Xe,epsilon_Si_Xe)));
+				siParticles[i].force.z += ((iPosition.z-jPosition.z)*(lennardJonesForce(r_ij,sigma_Si_Xe,epsilon_Si_Xe)));//-lennardJonesForce(2.5*sigma_Si,sigma_Si_Xe,epsilon_Si_Xe)));
+			}
+		}*/
+
+		if(USE_NEIGHBOR_LISTS)
+		{
+			free(siNeigborsPositions);
+			free(xeNeigborsPositions);
+		}
 	}
 }
 //----------------------------------------------------------------------------//
 
-void calculateForce_Xe(int MAX_SI_NEIGHBORS, int MAX_XE_NEIGHBORS, particleStruct particle, particleStruct* xeParticles, particleStruct* siParticles, int i, configurations config)
+void calculateForce_Xe(int MAX_SI_NEIGHBORS, int MAX_XE_NEIGHBORS, particleStruct* xeParticles, particleStruct* siParticles, int numOfSi, int numOfXe, bool USE_NEIGHBOR_LISTS)
 {
-	real3 *siNeigborsPositions = NULL;
-	real3 *xeNeigborsPositions = NULL;
-
-	real3 iPosition = particle.position;
-
-	int countSi = 0;
-	int countXe = 0;
-	double r_ij = 0.0;
-	xeParticles[i].force.x = 0.0;
-	xeParticles[i].force.y = 0.0;
-	xeParticles[i].force.z = 0.0;
-	real3 jPosition;
-
-	if(config.USE_NEIGHBOR_LISTS)
+	for(int i = 0; i < numOfXe; i++)
 	{
-		siNeigborsPositions = new real3[MAX_SI_NEIGHBORS];
-		xeNeigborsPositions = new real3[MAX_XE_NEIGHBORS];
-		for(countSi = 0; countSi < MAX_SI_NEIGHBORS && particle.siNeighbors[countSi] != -1; countSi++)
-		{
-			siNeigborsPositions[countSi] = siParticles[particle.siNeighbors[countSi]].position;
-		}
-		for(countXe = 0; countXe < MAX_XE_NEIGHBORS && particle.xeNeighbors[countXe] != -1; countXe++)
-		{
-			xeNeigborsPositions[countXe] = xeParticles[particle.xeNeighbors[countXe]].position;
-		}
-	}
+		particleStruct particle = xeParticles[i];
+		real3 *siNeigborsPositions = NULL;
+		real3 *xeNeigborsPositions = NULL;
 
-	if(!config.USE_NEIGHBOR_LISTS)
-	{
-		countSi = config.SI_PARTICLES;
-		countXe = config.XE_PARTICLES;
-	}
+		real3 iPosition = particle.position;
 
-	for(int j = 0; j < countXe; j++)
-	{
-		if(j != i)
+		int countSi = 0;
+		int countXe = 0;
+		double r_ij = 0.0;
+		xeParticles[i].force.x = 0.0;
+		xeParticles[i].force.y = 0.0;
+		xeParticles[i].force.z = 0.0;
+		real3 jPosition;
+
+		if(USE_NEIGHBOR_LISTS)
 		{
-			if(!config.USE_NEIGHBOR_LISTS)
-				jPosition = xeParticles[j].position;
-			else
-				jPosition = xeNeigborsPositions[j];
-
-			r_ij = distance2(iPosition, jPosition);
-			if(r_ij/sigma_Xe_Xe < xe_Cluster)
+			siNeigborsPositions = new real3[MAX_SI_NEIGHBORS];
+			xeNeigborsPositions = new real3[MAX_XE_NEIGHBORS];
+			for(countSi = 0; countSi < MAX_SI_NEIGHBORS && particle.siNeighbors[countSi] != -1; countSi++)
 			{
-				xeParticles[i].force.x += (iPosition.x-jPosition.x)*lennardJonesForce(r_ij,sigma_Xe_Xe,epsilon_Xe_Xe);
-				xeParticles[i].force.y += (iPosition.y-jPosition.y)*lennardJonesForce(r_ij,sigma_Xe_Xe,epsilon_Xe_Xe);
-				xeParticles[i].force.z += (iPosition.z-jPosition.z)*lennardJonesForce(r_ij,sigma_Xe_Xe,epsilon_Xe_Xe);
+				siNeigborsPositions[countSi] = siParticles[particle.siNeighbors[countSi]].position;
+			}
+			for(countXe = 0; countXe < MAX_XE_NEIGHBORS && particle.xeNeighbors[countXe] != -1; countXe++)
+			{
+				xeNeigborsPositions[countXe] = xeParticles[particle.xeNeighbors[countXe]].position;
 			}
 		}
-	}
 
-/*	for(int j = 0; j < countSi; j++)
-	{
-		if(!config.USE_NEIGHBOR_LISTS)
-			jPosition = siParticles[j].position;
-		else
-			jPosition = siNeigborsPositions[j];
-
-		r_ij = distance2(iPosition, jPosition);
-		if(r_ij/sigma_Si_Xe < a_Si_Xe)
+		if(!USE_NEIGHBOR_LISTS)
 		{
-			xeParticles[i].force.x += (iPosition.x-jPosition.x)*lennardJonesForce(r_ij,sigma_Si_Xe,epsilon_Si_Xe);
-			xeParticles[i].force.y += (iPosition.y-jPosition.y)*lennardJonesForce(r_ij,sigma_Si_Xe,epsilon_Si_Xe);
-			xeParticles[i].force.z += (iPosition.z-jPosition.z)*lennardJonesForce(r_ij,sigma_Si_Xe,epsilon_Si_Xe);
+			countSi = numOfSi;
+			countXe = numOfXe;
 		}
-	}*/
 
-	if(config.USE_NEIGHBOR_LISTS)
-	{
-		free(siNeigborsPositions);
-		free(xeNeigborsPositions);
+		for(int j = 0; j < countXe; j++)
+		{
+			if(j != i)
+			{
+				if(!USE_NEIGHBOR_LISTS)
+					jPosition = xeParticles[j].position;
+				else
+					jPosition = xeNeigborsPositions[j];
+
+				r_ij = distance2(iPosition, jPosition);
+				if(r_ij/sigma_Xe_Xe < xe_Cluster)
+				{
+					xeParticles[i].force.x += (iPosition.x-jPosition.x)*lennardJonesForce(r_ij,sigma_Xe_Xe,epsilon_Xe_Xe);
+					xeParticles[i].force.y += (iPosition.y-jPosition.y)*lennardJonesForce(r_ij,sigma_Xe_Xe,epsilon_Xe_Xe);
+					xeParticles[i].force.z += (iPosition.z-jPosition.z)*lennardJonesForce(r_ij,sigma_Xe_Xe,epsilon_Xe_Xe);
+				}
+			}
+		}
+
+	/*	for(int j = 0; j < countSi; j++)
+		{
+			if(!USE_NEIGHBOR_LISTS)
+				jPosition = siParticles[j].position;
+			else
+				jPosition = siNeigborsPositions[j];
+
+			r_ij = distance2(iPosition, jPosition);
+			if(r_ij/sigma_Si_Xe < a_Si_Xe)
+			{
+				xeParticles[i].force.x += (iPosition.x-jPosition.x)*lennardJonesForce(r_ij,sigma_Si_Xe,epsilon_Si_Xe);
+				xeParticles[i].force.y += (iPosition.y-jPosition.y)*lennardJonesForce(r_ij,sigma_Si_Xe,epsilon_Si_Xe);
+				xeParticles[i].force.z += (iPosition.z-jPosition.z)*lennardJonesForce(r_ij,sigma_Si_Xe,epsilon_Si_Xe);
+			}
+		}*/
+
+		if(USE_NEIGHBOR_LISTS)
+		{
+			free(siNeigborsPositions);
+			free(xeNeigborsPositions);
+		}
 	}
 }
 
