@@ -10,7 +10,6 @@
 #include "Configurations.h"
 #include "LennardJones.h"
 #include "SiPotential.h"
-#include <math.h>
 #include <fstream>
 
 //---------- force between two Si particles ---------------//

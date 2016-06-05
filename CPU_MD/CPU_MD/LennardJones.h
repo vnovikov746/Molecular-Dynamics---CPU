@@ -4,7 +4,6 @@
 #include "Structures.h"
 #include "Constants.h"
 #include "Configurations.h"
-#include <math.h>
 #include <fstream>
 
 //-----------------Lennard Jones Force -------------------//

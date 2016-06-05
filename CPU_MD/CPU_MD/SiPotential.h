@@ -7,7 +7,6 @@
 #include "Configurations.h"
 #include "Calculations.h"
 #include "SiPotential.h"
-#include <math.h>
 #include <fstream>
 
 //------------- potential between two Si ------------------// 

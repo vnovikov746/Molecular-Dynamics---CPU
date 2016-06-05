@@ -261,16 +261,16 @@ int listsDestroy(configurations *config, allLists *lists)
 	{
 		for(int i = 0; i < config->SI_PARTICLES; i++)
 		{
-			free(lists->siParticles[i].siNeighbors);
-			free(lists->siParticles[i].xeNeighbors);
+			delete lists->siParticles[i].siNeighbors;
+			delete lists->siParticles[i].xeNeighbors;
 		}
 		for(int i = 0; i < config->XE_PARTICLES; i++)
 		{
-			free(lists->xeParticles[i].siNeighbors);
-			free(lists->xeParticles[i].xeNeighbors);
+			delete lists->xeParticles[i].siNeighbors;
+			delete lists->xeParticles[i].xeNeighbors;
 		}
-		free(lists->siParticles);
-		free(lists->xeParticles);
+		delete lists->siParticles;
+		delete lists->xeParticles;
 	}
 	catch(exception e)
 	{
