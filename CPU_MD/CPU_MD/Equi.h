@@ -22,8 +22,8 @@ const double Csqrt2   = 1.4142135623730950488016887;
 const double C1sqrt2  = 0.7071067811865475244008444;
 
 int writeParticlesInput(configurations*);
-double erf(double);
-double erfc(double);
+double Erf(double);
+double Erfc(double);
 double Phi (double);
 double InvErfSmall (const double);
 double lambertW2 (const double);

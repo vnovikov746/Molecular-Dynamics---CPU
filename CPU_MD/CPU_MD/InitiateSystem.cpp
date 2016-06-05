@@ -121,7 +121,7 @@ int readConfig(string configFilename, configurations *config)
 			else if(line.find("PRINT_GRAPHS") == 0)
 			{
 				pos = line.find_first_of('=');
-				config->PRINT_GRAPHS = atoi(line.substr(pos+1, line.size()).c_str());
+				config->PRINT_GRAPHS = atoi(line.substr(pos + 1, line.size()).c_str()) > 0 ? true : false;
 			}
 			else if(line.find("OUT_FOR_GRAPHS") == 0)
 			{
