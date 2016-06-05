@@ -62,7 +62,7 @@ void calculateForce_Si(int MAX_SI_NEIGHBORS, int MAX_XE_NEIGHBORS, particleStruc
 						jPosition = siNeigborsPositions[j];
 
 					r_ij = distance2(iPosition, jPosition);	
-		//			if(r_ij/sigma_Si < 1.8)
+					if (r_ij/sigma_Si < a_Si)
 					{
 						siParticles[i].force.x += (iPosition.x-jPosition.x)*lennardJonesForce(r_ij,sigma_Si,epsilon_Si);
 						siParticles[i].force.y += (iPosition.y-jPosition.y)*lennardJonesForce(r_ij,sigma_Si,epsilon_Si);
@@ -71,7 +71,6 @@ void calculateForce_Si(int MAX_SI_NEIGHBORS, int MAX_XE_NEIGHBORS, particleStruc
 				}
 			}
 		}
-
 		else
 		{	
 			for(int j = 0; j < countSi; j++)
@@ -85,7 +84,7 @@ void calculateForce_Si(int MAX_SI_NEIGHBORS, int MAX_XE_NEIGHBORS, particleStruc
 			
 					r_ij = distance2(iPosition, jPosition);
 
-					if(r_ij/sigma_Si < a_Si)
+					if (r_ij / sigma_Si < a_Si)
 					{
 						siParticles[i].force.x -= v2_derivative_of_rix(iPosition, jPosition, r_ij);
 						siParticles[i].force.y -= v2_derivative_of_riy(iPosition, jPosition, r_ij);
@@ -106,7 +105,7 @@ void calculateForce_Si(int MAX_SI_NEIGHBORS, int MAX_XE_NEIGHBORS, particleStruc
 
 							r_ik = distance2(iPosition, kPosition);
 							r_jk = distance2(jPosition, kPosition);
-							if((r_ij/sigma_Si < a_Si && r_ik/sigma_Si < a_Si) || (r_ij/sigma_Si < a_Si && r_jk/sigma_Si < a_Si) || (r_ik/sigma_Si < a_Si && r_jk/sigma_Si < a_Si))
+							if ((r_ij / sigma_Si < a_Si && r_ik / sigma_Si < a_Si) || (r_ij / sigma_Si < a_Si && r_jk / sigma_Si < a_Si) || (r_ik / sigma_Si < a_Si && r_jk / sigma_Si < a_Si))
 							{
 								siParticles[i].force.x -= v3_derivative_of_rix(iPosition, jPosition, kPosition, r_ij, r_ik, r_jk);
 								siParticles[i].force.x -= v3_derivative_of_rix(iPosition, kPosition, jPosition, r_ik, r_ij, r_jk);
@@ -121,16 +120,13 @@ void calculateForce_Si(int MAX_SI_NEIGHBORS, int MAX_XE_NEIGHBORS, particleStruc
 			}
 		}
 
-	/*	for(int j = 0; j < countXe; j++)
+		for(int j = 0; j < countXe; j++)
 		{
 				if(!USE_NEIGHBOR_LISTS)
 					jPosition = xeParticles[j].position;
 				else
 					jPosition = xeNeigborsPositions[j];
 
-			jPosition.x += 0.25*config->SI_LENGTH*space_Si;
-			jPosition.y += 0.25*config->SI_LENGTH*space_Si;
-			jPosition.z += config->SI_HEIGHT+config->LA_SPACE;
 			r_ij = distance2(iPosition, jPosition);
 			if(r_ij/sigma_Si_Xe < a_Si_Xe)
 			{
@@ -138,7 +134,7 @@ void calculateForce_Si(int MAX_SI_NEIGHBORS, int MAX_XE_NEIGHBORS, particleStruc
 				siParticles[i].force.y += ((iPosition.y-jPosition.y)*(lennardJonesForce(r_ij,sigma_Si_Xe,epsilon_Si_Xe)));//-lennardJonesForce(2.5*sigma_Si,sigma_Si_Xe,epsilon_Si_Xe)));
 				siParticles[i].force.z += ((iPosition.z-jPosition.z)*(lennardJonesForce(r_ij,sigma_Si_Xe,epsilon_Si_Xe)));//-lennardJonesForce(2.5*sigma_Si,sigma_Si_Xe,epsilon_Si_Xe)));
 			}
-		}*/
+		}
 
 		if(USE_NEIGHBOR_LISTS)
 		{
@@ -206,7 +202,7 @@ void calculateForce_Xe(int MAX_SI_NEIGHBORS, int MAX_XE_NEIGHBORS, particleStruc
 			}
 		}
 
-	/*	for(int j = 0; j < countSi; j++)
+		for(int j = 0; j < countSi; j++)
 		{
 			if(!USE_NEIGHBOR_LISTS)
 				jPosition = siParticles[j].position;
@@ -220,7 +216,7 @@ void calculateForce_Xe(int MAX_SI_NEIGHBORS, int MAX_XE_NEIGHBORS, particleStruc
 				xeParticles[i].force.y += (iPosition.y-jPosition.y)*lennardJonesForce(r_ij,sigma_Si_Xe,epsilon_Si_Xe);
 				xeParticles[i].force.z += (iPosition.z-jPosition.z)*lennardJonesForce(r_ij,sigma_Si_Xe,epsilon_Si_Xe);
 			}
-		}*/
+		}
 
 		if(USE_NEIGHBOR_LISTS)
 		{
@@ -250,11 +246,6 @@ double V_total_Si(int SI_PARTICLES, particleStruct* siParticles)
 				vTotal += v3(distance2(siParticles[i].position,siParticles[j].position)/sigma_Si, distance2(siParticles[i].position,siParticles[k].position)/sigma_Si, distance2(siParticles[j].position,siParticles[k].position)/sigma_Si);
 			}
 		}
-	}
-	for(int i = 0; i < SI_PARTICLES; i++)
-	{
-//		cout<<(pow((sqrt((siParticles[i].velocity.x*siParticles[i].velocity.x)+(siParticles[i].velocity.y*siParticles[i].velocity.y)+(siParticles[i].velocity.z*siParticles[i].velocity.z))),2.0)*SiMass)/2<<endl;
-//		vTotal += (pow((sqrt((siParticles[i].velocity.x*siParticles[i].velocity.x)+(siParticles[i].velocity.y*siParticles[i].velocity.y)+(siParticles[i].velocity.z*siParticles[i].velocity.z))),2.0)*SiMass)/2;
 	}
 	return vTotal;
 }

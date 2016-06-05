@@ -5,22 +5,22 @@
 //-------------------- force between two Si particles ---------------------//
 double f2_derivative_of_rij_tag(double r_ij_tag)
 {
-	double first = -4*B_Si*(1.0/(r_ij_tag*r_ij_tag*r_ij_tag*r_ij_tag*r_ij_tag));
-	double second = ((B_Si*(1.0/(r_ij_tag*r_ij_tag*r_ij_tag*r_ij_tag)))-1)*(1.0/((r_ij_tag-a_Si)*(r_ij_tag-a_Si)));
-	double print = first-second;
-
-	double r_ij_tag_minus_a = r_ij_tag - a_Si;//r'ij-a
-	double r_ij_tag_minus_a2 = r_ij_tag_minus_a*r_ij_tag_minus_a;
-
-	double r_ij_tag_minus_a_in_mOne = (1.0/r_ij_tag_minus_a);//(r'ij-a)^(-1)
-	double r_ij_tag_minus_a_in_mTwo = (1.0/(r_ij_tag_minus_a2));//(r'ij-a)^(-2)
-
 	double r_ij_tag2 = r_ij_tag*r_ij_tag;
 	double r_ij_tag4 = r_ij_tag2*r_ij_tag2;
 	double r_ij_tag5 = r_ij_tag4*r_ij_tag;
 
-	double r_ij_tag_in_mFive = (1.0/(r_ij_tag5));//r'ij^(-5)
-	double r_ij_tag_in_mFour = (1.0/(r_ij_tag4));//r'ij^(-4)
+	double first = -4 * B_Si * (1.0 / (r_ij_tag5));
+	double second = ((B_Si * (1.0 / (r_ij_tag4))) - 1) * (1.0 / ((r_ij_tag - a_Si) * (r_ij_tag - a_Si)));
+	double print = first-second;
+
+	double r_ij_tag_minus_a = r_ij_tag - a_Si;//r'ij-a
+	double r_ij_tag_minus_a2 = r_ij_tag_minus_a * r_ij_tag_minus_a;
+
+	double r_ij_tag_minus_a_in_mOne = (1.0 / r_ij_tag_minus_a);//(r'ij-a)^(-1)
+	double r_ij_tag_minus_a_in_mTwo = (1.0 / (r_ij_tag_minus_a2));//(r'ij-a)^(-2)
+
+	double r_ij_tag_in_mFive = (1.0 / (r_ij_tag5));//r'ij^(-5)
+	double r_ij_tag_in_mFour = (1.0 / (r_ij_tag4));//r'ij^(-4)
 	double expression = B_Si * r_ij_tag_in_mFour;
 	expression = expression - 1.0;//(B*r'ij^(-4) - 1)
 
@@ -29,12 +29,12 @@ double f2_derivative_of_rij_tag(double r_ij_tag)
 	double f2_derivative_part_1 = -4.0 * B_Si * r_ij_tag_in_mFive;
 	double f2_derivative_part_2 = expression * r_ij_tag_minus_a_in_mTwo;
 
-	return A_Si*exponent*(f2_derivative_part_1 - f2_derivative_part_2);
+	return (A_Si * exponent * (f2_derivative_part_1 - f2_derivative_part_2));
 }
 
 double v2_derivative_of_rix(real3 i, real3 j, double r_ij)
 {
-	if(r_ij/sigma_Si == pow(2.0,1.0/6.0))
+	if (r_ij / sigma_Si == pow(2.0, 1.0 / 6.0))
 	{
 		return 0;
 	}
@@ -52,7 +52,7 @@ double v2_derivative_of_rix(real3 i, real3 j, double r_ij)
 
 double v2_derivative_of_riy(real3 i, real3 j, double r_ij)
 {
-	if(r_ij/sigma_Si == pow(2.0,1.0/6.0))
+	if (r_ij / sigma_Si == pow(2.0, 1.0 / 6.0))
 	{
 		return 0;
 	}
@@ -70,7 +70,7 @@ double v2_derivative_of_riy(real3 i, real3 j, double r_ij)
 
 double v2_derivative_of_riz(real3 i, real3 j, double r_ij)
 {
-	if(r_ij/sigma_Si == pow(2.0,1.0/6.0))
+	if (r_ij / sigma_Si == pow(2.0, 1.0 / 6.0))
 	{
 		return 0;
 	}

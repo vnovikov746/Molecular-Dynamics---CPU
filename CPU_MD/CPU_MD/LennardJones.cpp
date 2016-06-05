@@ -3,18 +3,15 @@
 //------------------------Lennard Jones Potential -----------------------------//
 double lennardJonesForce(double dist, double sig, double eps)
 {
-	double sigsq = sig*sig;
-	double con = 24.0*eps/sigsq;
-	double dist2 = dist * dist;
-	dist2 /= sigsq;
-	
-	double dist4 = dist2*dist2;
-	double dist8 = dist4*dist4;
-	double dist14 = dist2*dist4*dist8;
-	double invdist8= 1.0/dist8;
-	double invdist14= 1.0/dist14;
-	double s = 2.0*invdist14-invdist8;
-	return s * con;
+	double dist2 = dist*dist;
+	double dist3 = dist2*dist;
+	double dist6 = dist3*dist3;
+	double dist12 = dist6*dist6;
+	double dist13 = dist12*dist;
+	double sig2 = sig*sig;
+	double sig3 = sig2*sig;
+	double sig6 = sig3*sig3;
+	return ((24 * eps * (dist6 - (2 * sig6))) / dist13);
 }
 //----------------------------------------------------------------------------//
 
